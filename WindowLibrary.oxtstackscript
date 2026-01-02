@@ -31,6 +31,8 @@ end WindowDelete
 command _ssWindowDelete stackToClose
    if (the mainStack of stack stackToClose = stackToClose) then
       delete stack stackToClose     -- removes any cloned stack from memory; does not remove the file
+   else
+      close stack stackToClose
    end if
 end _ssWindowDelete
 
