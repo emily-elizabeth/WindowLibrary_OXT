@@ -1,2 +1,2 @@
 # WindowLibrary_OXT
-Library of window related commands
+Library of window related commands for OpenXTalk
