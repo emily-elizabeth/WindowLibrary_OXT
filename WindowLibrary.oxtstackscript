@@ -30,7 +30,7 @@ end WindowDelete
 
 command _ssWindowDelete stackToClose
    if (the mainStack of stack stackToClose = stackToClose) then
-      delete stack stackToClose     -- removes any cloned stack from memory; does not remove the file
+      delete stack stackToClose     -- removes the stack from memory; does not remove the file
    else
       close stack stackToClose
    end if
@@ -39,8 +39,12 @@ end _ssWindowDelete
 
 
 private command WindowCloseAll
-   --  repeat for each line tStack in the subStacks of stack ###
-   --  end repeat
+   local mainStacksLoaded
+   put the mainStacks into mainStacksLoaded
+   
+   repeat for each line currentStackName in mainStacksLoaded
+      delete stack currentStackName  -- removes the stack from memory; does not remove the file
+   end repeat
 end WindowCloseAll
 
 
