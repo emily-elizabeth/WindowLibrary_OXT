@@ -1,6 +1,6 @@
 ﻿script "WindowLibrary"
-command WindowShow pWindow
-   modeless stack pWindow
+command WindowShow stackName
+   modeless stack stackName
 end WindowShow
 
 
