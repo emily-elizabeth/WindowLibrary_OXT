@@ -1,0 +1,86 @@
+﻿script "WindowLibrary"
+command WindowShow pWindow
+   modeless stack pWindow
+end WindowShow
+
+
+
+command WindowClone stackToClone, newStackName, newStackTitle
+   -- stackToClone, newStackName, newStackTitle [, mainStack]
+   if (WindowExists(newStackName)) then
+      go to stack newStackName
+   else
+      lock screen
+      clone stack stackToClone
+      if (paramCount() = 4) AND (there is a stack param(4)) then
+         set the mainStack of it to param(4)
+      end if
+      set the title of it to newStackTitle
+      set the name of it to newStackName
+   end if
+end WindowClone
+
+
+
+command WindowDelete stackToClose
+   # by sending the command we can call this command from within the stackCloseRequest message of the window
+   # that needs to close and delete itself from memory
+   send "_ssWindowDelete stackToClose" to me in 0 seconds
+end WindowDelete
+
+command _ssWindowDelete stackToClose
+   if (the mainStack of stack stackToClose = stackToClose) then
+      delete stack stackToClose     -- removes any cloned stack from memory; does not remove the file
+   end if
+end _ssWindowDelete
+
+
+
+private command WindowCloseAll
+   --  repeat for each line tStack in the subStacks of stack ###
+   --  end repeat
+end WindowCloseAll
+
+
+
+function WindowExists stackName
+   return (stackName is among the lines of the subStacks of WindowLoadedStacks())
+end WindowExists
+
+
+
+
+// lifted from rev common library
+private function WindowLoadedStacks
+   local mainStacksLoaded
+   put the mainStacks into mainStacksLoaded
+   
+   put WindowFilterStacksList(mainStacksLoaded) into mainStacksLoaded
+   
+   local stacksInMemory
+   put EMPTY into stacksInMemory
+   
+   repeat for each line l in mainStacksLoaded
+      if (the substacks of stack l is empty) then
+         put l & LF after stacksInMemory
+      else
+         put l & LF& the substacks of stack l & LF after stacksInMemory
+      end if
+   end repeat
+   delete last char of stacksInMemory
+   
+   return stacksInMemory
+end WindowLoadedStacks
+
+
+// lifted from rev common library
+function WindowFilterStacksList mainStacksLoaded
+   local tReturnValue
+   repeat for each line l in mainStacksLoaded
+      if (char 1 to 3 of l is not "rev") and (l is not among the items of "Message Box,Home,answer dialog,ask dialog,script debugger,file selector,color chooser,Magnify") then
+         put l & LF after tReturnValue
+      end if
+   end repeat
+   delete last char of tReturnValue
+   return tReturnValue
+end WindowFilterStacksList
